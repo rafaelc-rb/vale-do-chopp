@@ -1,12 +1,10 @@
 import React, { ReactNode } from "react";
-import Menu from "./menu";
-import Head from "./head";
+import MiniDrawer from "./menu";
 
 function MainComponent({ children }: { children: ReactNode }) {
   return (
     <div>
-      <Head />
-      <Menu />
+      <MiniDrawer />
       {children}
     </div>
   );
