@@ -144,6 +144,7 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
           {["Painel", "Receita", "Despesa", "Estoque"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                onClick={() => console.log(`Você clicou em ${text}`)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -167,11 +168,13 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
             </ListItem>
           ))}
         </List>
+
         <Divider />
         <List>
           {["Histórico", "Consumo Próprio"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                onClick={() => console.log(`Você clicou em ${text}`)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
