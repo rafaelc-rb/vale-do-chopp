@@ -5,14 +5,19 @@ import Grid from "@mui/material/Unstable_Grid2/";
 export default function Home() {
   return (
     <MainComponent>
-      <Grid container spacing={2} rowSpacing={2}>
-        <Grid xs={4}>
+      <Grid container spacing={12} rowSpacing={2} justifyContent="center">
+        <Grid
+          xs={5}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
           <StatisticsCard title="Receitas" />
-        </Grid>
-        <Grid xs={4}>
           <StatisticsCard title="Despesas" />
         </Grid>
-        <Grid xs={4}>
+        <Grid xs={5}>
           <StatisticsCard title="Estoque" />
         </Grid>
       </Grid>
