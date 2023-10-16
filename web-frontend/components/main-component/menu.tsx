@@ -23,7 +23,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import LocalDiningOutlinedIcon from "@mui/icons-material/LocalDiningOutlined";
 import { ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const drawerWidth = 240;
 
@@ -100,6 +100,7 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -125,6 +126,22 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
     }
   };
 
+  const handlePathName = () => {
+    if (pathname === "/") {
+      return "Painel";
+    } else if (pathname === "/revenue") {
+      return "Receitas";
+    } else if (pathname === "/expense") {
+      return "Despesas";
+    } else if (pathname === "/stock") {
+      return "Estoque";
+    } else if (pathname === "/log") {
+      return "Histórico";
+    } else if (pathname === "/personal-use") {
+      return "Consumo Próprio";
+    }
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -143,7 +160,7 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Vale do Chopp
+            Vale do Chopp - {handlePathName()}
           </Typography>
         </Toolbar>
       </AppBar>
