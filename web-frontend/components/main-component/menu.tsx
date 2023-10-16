@@ -23,6 +23,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import LocalDiningOutlinedIcon from "@mui/icons-material/LocalDiningOutlined";
 import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 
 const drawerWidth = 240;
 
@@ -98,6 +99,7 @@ const Drawer = styled(MuiDrawer, {
 export default function MiniDrawer({ children }: { children: ReactNode }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -105,6 +107,22 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handlePageRedirect = (page: string) => {
+    if (page === "Painel") {
+      router.push("/");
+    } else if (page === "Receita") {
+      router.push("/revenue");
+    } else if (page === "Despesa") {
+      router.push("/expense");
+    } else if (page === "Estoque") {
+      router.push("/stock");
+    } else if (page === "Histórico") {
+      router.push("/log");
+    } else if (page === "Consumo Próprio") {
+      router.push("/personal-use");
+    }
   };
 
   return (
@@ -144,7 +162,7 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
           {["Painel", "Receita", "Despesa", "Estoque"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => console.log(`Você clicou em ${text}`)}
+                onClick={() => handlePageRedirect(text)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -174,7 +192,7 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
           {["Histórico", "Consumo Próprio"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => console.log(`Você clicou em ${text}`)}
+                onClick={() => handlePageRedirect(text)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",

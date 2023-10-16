@@ -1,10 +1,9 @@
-import MainComponent from "@/components/main-component";
 import StatisticsCard from "@/components/statistics-card";
 import Grid from "@mui/material/Unstable_Grid2/";
 
 export default function Home() {
   return (
-    <MainComponent>
+    <>
       <Grid container spacing={12} rowSpacing={2} justifyContent="center">
         <Grid
           xs={5}
@@ -21,6 +20,6 @@ export default function Home() {
           <StatisticsCard title="Estoque" />
         </Grid>
       </Grid>
-    </MainComponent>
+    </>
   );
 }
