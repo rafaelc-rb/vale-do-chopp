@@ -13,9 +13,12 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.13",
     "@mui/material": "^5.14.13",
+    "@mui/x-date-pickers": "^6.16.2",
+    "dayjs": "^1.11.10",
     "next": "13.5.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sweetalert2": "^11.7.32"
   },
   "devDependencies": {
     "@types/node": "^20",

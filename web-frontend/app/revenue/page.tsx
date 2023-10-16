@@ -13,12 +13,17 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 interface Revenue {
-  type: "";
-  amount: "";
-  price: "";
+  type: string;
+  amount: string;
+  price: string;
+  date: string;
 }
 
 export default function Revenue() {
@@ -26,6 +31,7 @@ export default function Revenue() {
     type: "",
     amount: "",
     price: "",
+    date: "",
   });
 
   const handleChange =
@@ -45,12 +51,27 @@ export default function Revenue() {
   function formatCurrencyInput(value: string) {
     // Remove non-numeric characters
     const numericValue = value.replace(/\D/g, "");
-
     // Convert to a number with two decimal places
     const formattedValue = (parseInt(numericValue, 10) / 100).toFixed(2);
 
     return formattedValue;
   }
+
+  const handleDateChange = (prop: keyof Revenue) => (value: Dayjs | null) => {
+    setRevenue({
+      ...revenue,
+      [prop]: value?.format("DD/MM/YYYY") || "",
+    });
+  };
+
+  const handleSubmit = async () => {
+    console.table(revenue);
+    Swal.fire({
+      title: "Receita registrada com sucesso",
+      text: `A receita de R$${revenue.price} foi registrada!`,
+      icon: "success",
+    });
+  };
 
   return (
     <Box
@@ -99,7 +120,23 @@ export default function Revenue() {
             />
           </Grid>
           <Grid xs={12}>
-            <Button onClick={() => console.table(revenue)}>Salvar</Button>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Data da venda"
+                openTo="month"
+                views={["year", "month", "day"]}
+                format="DD/MM/YYYY"
+                value={
+                  revenue.date && dayjs(revenue.date, "DD/MM/YYYY").isValid()
+                    ? dayjs(revenue.date, "DD/MM/YYYY")
+                    : null
+                }
+                onChange={handleDateChange("date")}
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid xs={12}>
+            <Button onClick={() => handleSubmit()}>Salvar</Button>
           </Grid>
         </Grid>
       </Paper>
