@@ -9,7 +9,7 @@ interface Stock {
 }
 interface StatisticsCardProps {
   title: string;
-  stock?: Stock;
+  stock?: Stock[];
 }
 
 function StatisticsCard(props: StatisticsCardProps) {
@@ -39,7 +39,9 @@ function StatisticsCard(props: StatisticsCardProps) {
           {title === "Receitas" && <AttachMoneyOutlinedIcon color="success" />}
           {title === "Despesas" && <AttachMoneyOutlinedIcon color="error" />}
           {title === "Estoque" && <Inventory2OutlinedIcon />}
-          {title}
+          <Typography fontWeight={700} variant="h6">
+            {title}
+          </Typography>
         </Box>
         {title !== "Estoque" && (
           <Typography color={title === "Despesas" ? "error" : "inherit"}>
@@ -49,11 +51,22 @@ function StatisticsCard(props: StatisticsCardProps) {
       </Box>
       {title === "Estoque" && (
         <Box>
-          Barril de 10 litros: {stock?.amount ? String(stock.amount) : "0"}
-          <br />
-          Barril de 30 litros: {stock?.amount ? String(stock.amount) : "0"}
-          <br />
-          Barril de 50 litros: {stock?.amount ? String(stock.amount) : "0"}
+          {stock &&
+            stock.map((e) => {
+              return (
+                <Typography variant="subtitle1">
+                  Barril de {e.type} litros: <strong>{e.amount}</strong>
+                </Typography>
+              );
+            })}
+          {!stock && (
+            <>
+              <Typography variant="subtitle1">O estoque está vazio!</Typography>
+              <Typography variant="subtitle1">
+                Registre novos itens para fazer o monitoramento.
+              </Typography>
+            </>
+          )}
         </Box>
       )}
     </Paper>
