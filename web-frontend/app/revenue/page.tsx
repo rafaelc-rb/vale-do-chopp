@@ -79,12 +79,15 @@ export default function Revenue() {
         display: "flex",
         flexDirection: "column",
         gap: "1rem",
+        alignItems: "center",
       }}
     >
-      <Typography variant="h4">Nova Receita</Typography>
-      <Paper sx={{ padding: "1rem", width: "40vw" }}>
+      <Typography variant="h4" sx={{ alignSelf: "left" }}>
+        Nova Receita
+      </Typography>
+      <Paper sx={{ padding: "1rem", width: "30vw" }}>
         <Grid container spacing={2} rowSpacing={2}>
-          <Grid xs={4}>
+          <Grid xs={8}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Barril</InputLabel>
               <Select
@@ -100,14 +103,14 @@ export default function Revenue() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid xs={2}>
+          <Grid xs={4}>
             <TextField
               label="Qtd"
               type="number"
               onChange={handleChange("amount")}
             />
           </Grid>
-          <Grid xs={3}>
+          <Grid xs={6}>
             <TextField
               label="Valor"
               InputProps={{
@@ -119,7 +122,7 @@ export default function Revenue() {
               onChange={handleChange("price")}
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid xs={6}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Data da venda"
@@ -135,8 +138,10 @@ export default function Revenue() {
               />
             </LocalizationProvider>
           </Grid>
-          <Grid xs={12}>
-            <Button onClick={() => handleSubmit()}>Salvar</Button>
+          <Grid xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button variant="outlined" onClick={() => handleSubmit()}>
+              Salvar
+            </Button>
           </Grid>
         </Grid>
       </Paper>
