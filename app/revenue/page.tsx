@@ -17,6 +17,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent, useState } from "react";
+import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 interface Revenue {
@@ -24,6 +25,14 @@ interface Revenue {
   amount: string;
   price: string;
   date: string;
+}
+
+async function postRevenue(body: Revenue) {
+  const res = await fetch("api/revenue", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  return res;
 }
 
 export default function Revenue() {
@@ -41,10 +50,9 @@ export default function Revenue() {
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | SelectChangeEvent
     ) => {
-      let value = event.target.value as string;
-      if (prop === "price") {
-        value = formatCurrencyInput(value);
-      }
+      let value = event.target.value;
+      if (prop === "price") value = formatCurrencyInput(value);
+      else if (prop === "type") value = `${value}L`;
       setRevenue({ ...revenue, [prop]: value });
     };
 
@@ -64,13 +72,51 @@ export default function Revenue() {
     });
   };
 
+  const validateRevenueFields = () => {
+    const errors = {
+      type: !revenue.type,
+      amount: !revenue.amount,
+      price: !revenue.price,
+      date: !revenue.date,
+    };
+
+    const messageHandler = {
+      type: "Barril",
+      amount: "Quantidade",
+      price: "Valor",
+      date: "Data da venda",
+    };
+
+    const emptyFields = Object.keys(errors)
+      .filter((key) => errors[key as keyof typeof errors])
+      .map((key) => messageHandler[key as keyof typeof messageHandler])
+      .join("; ");
+
+    if (emptyFields.length > 0) {
+      toast.error(
+        `O(s) campo(s) a seguir devem ser preenchidos: ${emptyFields}`
+      );
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
-    console.table(revenue);
-    Swal.fire({
-      title: "Receita registrada com sucesso",
-      text: `A receita de R$${revenue.price} foi registrada!`,
-      icon: "success",
-    });
+    if (validateRevenueFields()) {
+      try {
+        await postRevenue(revenue);
+        Swal.fire({
+          title: "Receita registrada com sucesso",
+          text: `A receita de R$${revenue.price} foi registrada!`,
+          icon: "success",
+        });
+      } catch (err) {
+        Swal.fire({
+          title: "Ocorreu um erro ao tentar registrar a receita",
+          icon: "error",
+        });
+      }
+    }
   };
 
   return (
@@ -93,7 +139,7 @@ export default function Revenue() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={revenue.type}
+                value={revenue.type.split("L")[0]}
                 label="Barril"
                 onChange={handleChange("type")}
               >
