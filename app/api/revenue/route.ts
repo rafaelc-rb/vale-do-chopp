@@ -21,12 +21,19 @@ export async function POST(request: NextRequest) {
         })
         return new Response("Created successfully", {status: 200})
     } catch (err){
-        return new Response("Error",{status: 500})
+        return new Response("Error",{status: 400})
     }
 }
 
 export async function GET(request: NextRequest) {
-    const body = await request.json()
-    console.log(body)
-    return new Response('Not yet implemented')
+    try {
+        const revenues = await prisma.revenue.findMany({
+            select:{
+                price: true
+            }
+        })
+        return new Response(JSON.stringify(revenues))
+    } catch (err) {
+        return new Response("Error",{status: 400})
+    }   
 }

@@ -9,11 +9,12 @@ interface Stock {
 }
 interface StatisticsCardProps {
   title: string;
+  amount?: string;
   stock?: Array<Stock>;
 }
 
 function StatisticsCard(props: StatisticsCardProps) {
-  const { title, stock }: StatisticsCardProps = props;
+  const { title, stock, amount }: StatisticsCardProps = props;
   return (
     <Paper
       sx={{
@@ -45,7 +46,7 @@ function StatisticsCard(props: StatisticsCardProps) {
         </Box>
         {title !== "Estoque" && (
           <Typography color={title === "Despesas" ? "error" : "inherit"}>
-            R$0,00
+            R${amount ? amount : "0.00"}
           </Typography>
         )}
       </Box>
