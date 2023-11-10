@@ -19,11 +19,11 @@ interface Expense {
   item_name: string;
   amount: string;
   price: string;
-  buyingDate: string;
+  purchase_date: string;
 }
 
 export default function Expense() {
-  const [expense, setExpense] = useState({
+  const [expense, setExpense] = useState<Expense>({
     item_name: "",
     amount: "",
     price: "",
@@ -122,7 +122,7 @@ export default function Expense() {
                     ? dayjs(expense.purchase_date, "DD/MM/YYYY")
                     : null
                 }
-                onChange={handleDateChange("buyingDate")}
+                onChange={handleDateChange("purchase_date")}
               />
             </LocalizationProvider>
           </Grid>

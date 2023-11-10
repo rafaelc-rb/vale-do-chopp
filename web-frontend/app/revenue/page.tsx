@@ -16,7 +16,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Swal from "sweetalert2";
 
 interface Revenue {
@@ -27,7 +27,7 @@ interface Revenue {
 }
 
 export default function Revenue() {
-  const [revenue, setRevenue] = useState({
+  const [revenue, setRevenue] = useState<Revenue>({
     type: "",
     amount: "",
     price: "",
@@ -38,7 +38,7 @@ export default function Revenue() {
     (prop: keyof Revenue) =>
     (
       event:
-        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | SelectChangeEvent
     ) => {
       let value = event.target.value as string;
