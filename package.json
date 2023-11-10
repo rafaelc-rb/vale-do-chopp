@@ -1,5 +1,5 @@
 {
-  "name": "web-frontend",
+  "name": "vale-do-chopp",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,21 +11,21 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.13",
-    "@mui/material": "^5.14.13",
-    "@mui/x-date-pickers": "^6.16.2",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.17",
+    "@mui/x-date-pickers": "^6.18.1",
     "dayjs": "^1.11.10",
-    "next": "13.5.4",
+    "next": "14.0.2",
     "react": "^18",
     "react-dom": "^18",
-    "sweetalert2": "^11.7.32"
+    "sweetalert2": "^11.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "13.5.4",
+    "eslint-config-next": "14.0.2",
     "typescript": "^5"
   }
 }
