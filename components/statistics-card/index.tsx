@@ -9,7 +9,7 @@ interface Stock {
 }
 interface StatisticsCardProps {
   title: string;
-  stock?: Stock[];
+  stock?: Array<Stock>;
 }
 
 function StatisticsCard(props: StatisticsCardProps) {
@@ -52,9 +52,9 @@ function StatisticsCard(props: StatisticsCardProps) {
       {title === "Estoque" && (
         <Box>
           {stock &&
-            stock.map((e) => {
+            stock.map((e, index) => {
               return (
-                <Typography variant="subtitle1">
+                <Typography key={index} variant="subtitle1">
                   Barril de {e.type} litros: <strong>{e.amount}</strong>
                 </Typography>
               );
