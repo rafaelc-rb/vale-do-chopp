@@ -164,7 +164,12 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer
+        variant="permanent"
+        open={open}
+        onMouseEnter={handleDrawerOpen}
+        onMouseLeave={handleDrawerClose}
+      >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
