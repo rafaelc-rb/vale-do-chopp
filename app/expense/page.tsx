@@ -74,7 +74,7 @@ export default function Expense() {
   const validateExpenseFields = () => {
     const errors = {
       item_name: !expense.item_name,
-      amount: !expense.amount,
+      amount: !expense.amount || expense.amount < 1,
       price: !expense.price,
       purchase_date: !expense.purchase_date,
     };

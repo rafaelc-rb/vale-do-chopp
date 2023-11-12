@@ -79,7 +79,7 @@ export default function Revenue() {
   const validateRevenueFields = () => {
     const errors = {
       type: !revenue.type,
-      amount: !revenue.amount,
+      amount: !revenue.amount || revenue.amount < 1,
       price: !revenue.price,
       date: !revenue.date,
     };

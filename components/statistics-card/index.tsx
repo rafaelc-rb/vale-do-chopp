@@ -44,10 +44,13 @@ function StatisticsCard(props: StatisticsCardProps) {
             {title}
           </Typography>
         </Box>
-        {title !== "Estoque" && (
+        {title !== "Estoque" && title !== "Toto" && title !== "Xuxu" && (
           <Typography color={title === "Despesas" ? "error" : "inherit"}>
             R${amount ? amount : "0.00"}
           </Typography>
+        )}
+        {(title === "Toto" || title === "Xuxu") && (
+          <Typography>Quantidade: {amount ? amount : "0"}</Typography>
         )}
       </Box>
       {title === "Estoque" && (

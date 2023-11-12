@@ -79,7 +79,7 @@ export default function Stock() {
   const validateStockFields = () => {
     const errors = {
       type: !stock.type,
-      amount: !stock.amount,
+      amount: !stock.amount || stock.amount < 1,
       price: !stock.price,
       purchase_date: !stock.purchase_date,
     };
