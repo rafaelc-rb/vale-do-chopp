@@ -1,22 +1,22 @@
 import { NextRequest } from "next/server"
 import prisma from "../../../prisma/client";
 
-type Revenue = {
-    type: string,
-    amount: string,
-    price: string,
-    date: string,
+type Expense = {
+    item_name: string;
+    amount: string;
+    price: string;
+    purchase_date: string;
 }
 
 export async function POST(request: NextRequest) {
-    const revenue: Revenue = await request.json()
+    const expense: Expense = await request.json()
     try {
-        await prisma.revenue.create({
+        await prisma.expense.create({
             data: {
-                type: revenue.type,
-                amount: revenue.amount,
-                price: revenue.price,
-                date: revenue.date,
+                item_name: expense.item_name,
+                amount: expense.amount,
+                price: expense.price,
+                purchase_date: expense.purchase_date,
             }
         })
         return new Response("Created successfully", {status: 200})
@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        const revenues = await prisma.revenue.findMany({
+        const expenses = await prisma.expense.findMany({
             select:{
                 price: true
             }
         })
-        return new Response(JSON.stringify(revenues))
+        return new Response(JSON.stringify(expenses))
     } catch (err) {
         return new Response("Error",{status: 400})
     }   

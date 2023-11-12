@@ -16,6 +16,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -42,6 +43,8 @@ export default function Revenue() {
     price: "",
     date: "",
   });
+
+  const router = useRouter();
 
   const handleChange =
     (prop: keyof Revenue) =>
@@ -105,11 +108,14 @@ export default function Revenue() {
     if (validateRevenueFields()) {
       try {
         await postRevenue(revenue);
-        Swal.fire({
+        const ok = await Swal.fire({
           title: "Receita registrada com sucesso",
           text: `A receita de R$${revenue.price} foi registrada!`,
           icon: "success",
         });
+        if (ok) {
+          router.push("/");
+        }
       } catch (err) {
         Swal.fire({
           title: "Ocorreu um erro ao tentar registrar a receita",

@@ -10,16 +10,25 @@ async function getRevenue() {
   return res.json();
 }
 
+async function getExpense() {
+  const res = await fetch("api/expense", {
+    method: "GET",
+  });
+  return res.json();
+}
+
 export default function Home() {
   const [revenues, setRevenues] = useState<{ price: number }[]>();
+  const [expenses, setExpenses] = useState<{ price: number }[]>();
 
   useEffect(() => {
     getRevenue().then((res) => setRevenues(res));
+    getExpense().then((res) => setExpenses(res));
   }, []);
 
-  const handleRevenueValues = () => {
-    if (!revenues) return;
-    const total = revenues.reduce((sum, e) => sum + Number(e.price), 0);
+  const handleSumPrices = (pricesArray: { price: number }[] | undefined) => {
+    if (!pricesArray) return;
+    const total = pricesArray.reduce((sum, e) => sum + Number(e.price), 0);
     return total.toFixed(2);
   };
 
@@ -33,8 +42,8 @@ export default function Home() {
           justifyContent: "space-between",
         }}
       >
-        <StatisticsCard title="Receitas" amount={handleRevenueValues()} />
-        <StatisticsCard title="Despesas" />
+        <StatisticsCard title="Receitas" amount={handleSumPrices(revenues)} />
+        <StatisticsCard title="Despesas" amount={handleSumPrices(expenses)} />
       </Grid>
       <Grid xs={5}>
         <StatisticsCard title="Estoque" />
