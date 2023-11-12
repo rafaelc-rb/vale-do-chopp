@@ -2,6 +2,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import React from "react";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import { PersonalUseProps } from "@/app/personal-use/page";
 
 interface Stock {
   type: string;
@@ -11,10 +12,11 @@ interface StatisticsCardProps {
   title: string;
   amount?: string;
   stock?: Array<Stock>;
+  personalUses?: Array<PersonalUseProps>;
 }
 
 function StatisticsCard(props: StatisticsCardProps) {
-  const { title, stock, amount }: StatisticsCardProps = props;
+  const { title, stock, amount, personalUses }: StatisticsCardProps = props;
   return (
     <Paper
       sx={{
@@ -50,7 +52,16 @@ function StatisticsCard(props: StatisticsCardProps) {
           </Typography>
         )}
         {(title === "Toto" || title === "Xuxu") && (
-          <Typography>Quantidade: {amount ? amount : "0"}</Typography>
+          <Box>
+            {personalUses?.map((e, index) => {
+              return (
+                <Typography key={index}>
+                  Barril de {e.type}:{" "}
+                  <strong>{e.amount ? e.amount : "0"} unidades</strong>
+                </Typography>
+              );
+            })}
+          </Box>
         )}
       </Box>
       {title === "Estoque" && (
@@ -60,7 +71,7 @@ function StatisticsCard(props: StatisticsCardProps) {
             stock.map((e, index) => {
               return (
                 <Typography key={index} variant="subtitle1">
-                  Barril de {e.type}: <strong>{e.amount}</strong>
+                  Barril de {e.type}: <strong>{e.amount} unidades</strong>
                 </Typography>
               );
             })}

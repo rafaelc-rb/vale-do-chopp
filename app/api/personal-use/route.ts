@@ -16,14 +16,14 @@ export async function POST(request: NextRequest) {
             },
         })
 
-        if(stock){
+        if(stock && stock.amount >= personalUse.amount){
             // Atualize a quantidade de estoque corretamente
             await prisma.stock.update({
                 where: {
                     id: stock.id
                 },
                 data: {
-                    amount: stock.amount - 1
+                    amount: stock.amount - personalUse.amount
                 }
             })
             await prisma.personalUse.create({
@@ -54,14 +54,14 @@ export async function POST(request: NextRequest) {
 export async function GET() {
     try {
         const uses = await prisma.personalUse.findMany();
-        let useSummary: {who: string, amount: number}[] = [];
+        let useSummary: {who: string, type: string, amount: number}[] = [];
 
         uses.forEach(use => {
-            let found = useSummary.find(item => item.who === use.who);
+            let found = useSummary.find(item => item.who === use.who && item.type === use.type);
             if (found) {
                 found.amount += use.amount;
             } else {
-                useSummary.push({who: use.who, amount: use.amount});
+                useSummary.push({who: use.who, type: use.type, amount: use.amount});
             }
         });
         return new Response(JSON.stringify(useSummary))

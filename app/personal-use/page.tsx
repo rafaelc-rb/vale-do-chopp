@@ -15,13 +15,13 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-interface PersonalUse {
+export interface PersonalUseProps {
   who: string;
   type: string;
   amount: number;
 }
 
-async function postPersonalUse(body: PersonalUse) {
+async function postPersonalUse(body: PersonalUseProps) {
   const res = await fetch("api/personal-use", {
     method: "POST",
     body: JSON.stringify(body),
@@ -37,15 +37,15 @@ async function getUses() {
 }
 
 export default function PersonalUse() {
-  const [totoUseQtd, setTotoUseQtd] = useState();
-  const [xuxuUseQtd, setXuxuUseQtd] = useState();
-  const [totoUse, setTotoUse] = useState<PersonalUse>({
+  const [totoUseQtd, setTotoUseQtd] = useState<Array<PersonalUseProps>>();
+  const [xuxuUseQtd, setXuxuUseQtd] = useState<Array<PersonalUseProps>>();
+  const [totoUse, setTotoUse] = useState<PersonalUseProps>({
     who: "Toto",
     type: "",
     amount: 0,
   });
 
-  const [xuxuUse, setXuxuUse] = useState<PersonalUse>({
+  const [xuxuUse, setXuxuUse] = useState<PersonalUseProps>({
     who: "Xuxu",
     type: "",
     amount: 0,
@@ -56,13 +56,13 @@ export default function PersonalUse() {
   useEffect(() => {
     getUses().then((uses) => {
       if (!uses) return;
-      setTotoUseQtd(uses.find((e: PersonalUse) => e.who === "Toto")?.amount);
-      setXuxuUseQtd(uses.find((e: PersonalUse) => e.who === "Xuxu")?.amount);
+      setTotoUseQtd(uses.filter((e: PersonalUseProps) => e.who === "Toto"));
+      setXuxuUseQtd(uses.filter((e: PersonalUseProps) => e.who === "Xuxu"));
     });
   }, []);
 
   const handleChangeToto =
-    (prop: keyof PersonalUse) =>
+    (prop: keyof PersonalUseProps) =>
     (
       event:
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -75,7 +75,7 @@ export default function PersonalUse() {
     };
 
   const handleChangeXuxu =
-    (prop: keyof PersonalUse) =>
+    (prop: keyof PersonalUseProps) =>
     (
       event:
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -87,7 +87,7 @@ export default function PersonalUse() {
       setXuxuUse({ ...xuxuUse, [prop]: value });
     };
 
-  const validateFields = (who: PersonalUse) => {
+  const validateFields = (who: PersonalUseProps) => {
     const errors = {
       type: !who.type,
       amount: !who.amount || who.amount < 1,
@@ -177,7 +177,7 @@ export default function PersonalUse() {
           gap: "1rem",
         }}
       >
-        <StatisticsCard title="Toto" amount={totoUseQtd} />
+        <StatisticsCard title="Toto" personalUses={totoUseQtd} />
         <TextField
           label="Quantidade de barris"
           type="number"
@@ -210,7 +210,7 @@ export default function PersonalUse() {
           gap: "1rem",
         }}
       >
-        <StatisticsCard title="Xuxu" amount={xuxuUseQtd} />
+        <StatisticsCard title="Xuxu" personalUses={xuxuUseQtd} />
         <TextField
           label="Quantidade de barris"
           type="number"

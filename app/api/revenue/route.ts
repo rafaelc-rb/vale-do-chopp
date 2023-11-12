@@ -17,14 +17,14 @@ export async function POST(request: NextRequest) {
             },
         })
 
-        if(stock){
+        if(stock && stock.amount >= revenue.amount){
             // Atualize a quantidade de estoque corretamente
             await prisma.stock.update({
                 where: {
                     id: stock.id
                 },
                 data: {
-                    amount: stock.amount - 1
+                    amount: stock.amount - revenue.amount
                 }
             })
             await prisma.revenue.create({

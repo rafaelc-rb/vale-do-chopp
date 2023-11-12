@@ -19,6 +19,16 @@ export async function POST(request: NextRequest) {
                 purchase_date: stock.purchase_date,
             }
         })
+
+        await prisma.expense.create({
+            data: {
+                item_name: `Barril de ${stock.type}`,
+                amount: stock.amount,
+                price: stock.price,
+                purchase_date: stock.purchase_date,
+            }
+        })
+
         return new Response("Created successfully", {status: 200})
     } catch (err){
         return new Response("Error",{status: 400})
