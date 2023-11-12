@@ -13,7 +13,7 @@ datasource db {
 model Revenue {
   id     String @id @default(uuid())
   type   String
-  amount String
+  amount Int
   price  String
   date   String
 }
@@ -21,7 +21,7 @@ model Revenue {
 model Expense {
   id            String @id @default(uuid())
   item_name     String
-  amount        String
+  amount        Int
   price         String
   purchase_date String
 }
@@ -29,7 +29,7 @@ model Expense {
 model Stock {
   id            String @id @default(uuid())
   type          String
-  amount        String
+  amount        Int
   price         String
   purchase_date String
 }
@@ -38,12 +38,14 @@ model PersonalUse {
   id     String @id @default(uuid())
   who    String
   type   String
-  amount String
+  amount Int
 }
 
 model Log {
   id     String @id @default(uuid())
   action String
+  item   String
+  amount Int
   price  String
   date   String
 }

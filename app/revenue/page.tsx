@@ -23,7 +23,7 @@ import Swal from "sweetalert2";
 
 interface Revenue {
   type: string;
-  amount: string;
+  amount: number;
   price: string;
   date: string;
 }
@@ -39,7 +39,7 @@ async function postRevenue(body: Revenue) {
 export default function Revenue() {
   const [revenue, setRevenue] = useState<Revenue>({
     type: "",
-    amount: "",
+    amount: 0,
     price: "",
     date: "",
   });

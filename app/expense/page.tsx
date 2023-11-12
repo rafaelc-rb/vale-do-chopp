@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 
 interface Expense {
   item_name: string;
-  amount: string;
+  amount: number;
   price: string;
   purchase_date: string;
 }
@@ -35,7 +35,7 @@ async function postExpense(body: Expense) {
 export default function Expense() {
   const [expense, setExpense] = useState<Expense>({
     item_name: "",
-    amount: "",
+    amount: 0,
     price: "",
     purchase_date: "",
   });

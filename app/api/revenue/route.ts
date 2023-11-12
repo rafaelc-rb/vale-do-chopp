@@ -3,7 +3,7 @@ import prisma from "../../../prisma/client";
 
 type Revenue = {
     type: string,
-    amount: string,
+    amount: number,
     price: string,
     date: string,
 }

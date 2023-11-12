@@ -3,7 +3,7 @@ import prisma from "../../../prisma/client";
 
 type Expense = {
     item_name: string;
-    amount: string;
+    amount: number;
     price: string;
     purchase_date: string;
 }

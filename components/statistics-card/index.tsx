@@ -53,14 +53,15 @@ function StatisticsCard(props: StatisticsCardProps) {
       {title === "Estoque" && (
         <Box>
           {stock &&
+            stock.length > 0 &&
             stock.map((e, index) => {
               return (
                 <Typography key={index} variant="subtitle1">
-                  Barril de {e.type} litros: <strong>{e.amount}</strong>
+                  Barril de {e.type}: <strong>{e.amount}</strong>
                 </Typography>
               );
             })}
-          {!stock && (
+          {(!stock || stock.length === 0) && (
             <>
               <Typography variant="subtitle1">O estoque está vazio!</Typography>
               <Typography variant="subtitle1">

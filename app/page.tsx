@@ -17,13 +17,22 @@ async function getExpense() {
   return res.json();
 }
 
+async function getStock() {
+  const res = await fetch("api/stock", {
+    method: "GET",
+  });
+  return res.json();
+}
+
 export default function Home() {
-  const [revenues, setRevenues] = useState<{ price: number }[]>();
-  const [expenses, setExpenses] = useState<{ price: number }[]>();
+  const [revenues, setRevenues] = useState<{ price: number }[]>([]);
+  const [expenses, setExpenses] = useState<{ price: number }[]>([]);
+  const [stock, setStock] = useState<{ type: string; amount: number }[]>([]);
 
   useEffect(() => {
     getRevenue().then((res) => setRevenues(res));
     getExpense().then((res) => setExpenses(res));
+    getStock().then((res) => setStock(res));
   }, []);
 
   const handleSumPrices = (pricesArray: { price: number }[] | undefined) => {
@@ -46,7 +55,7 @@ export default function Home() {
         <StatisticsCard title="Despesas" amount={handleSumPrices(expenses)} />
       </Grid>
       <Grid xs={5}>
-        <StatisticsCard title="Estoque" />
+        <StatisticsCard title="Estoque" stock={stock} />
       </Grid>
     </Grid>
   );

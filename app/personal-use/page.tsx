@@ -15,20 +15,20 @@ import Swal from "sweetalert2";
 interface PersonalUse {
   who: string;
   type: string;
-  amount: string;
+  amount: number;
 }
 
 export default function PersonalUse() {
   const [totoUse, setTotoUse] = useState<PersonalUse>({
     who: "Toto",
     type: "",
-    amount: "",
+    amount: 0,
   });
 
   const [xuxuUse, setXuxuUse] = useState<PersonalUse>({
     who: "Toto",
     type: "",
-    amount: "",
+    amount: 0,
   });
 
   const handleChangeToto =
