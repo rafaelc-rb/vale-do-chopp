@@ -37,7 +37,7 @@ export default function Expense() {
     item_name: "",
     amount: 0,
     price: "",
-    purchase_date: "",
+    purchase_date: dayjs().format("DD/MM/YYYY"),
   });
 
   const router = useRouter();

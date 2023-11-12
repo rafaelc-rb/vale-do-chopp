@@ -41,7 +41,7 @@ export default function Revenue() {
     type: "",
     amount: 0,
     price: "",
-    date: "",
+    date: dayjs().format("DD/MM/YYYY"),
   });
 
   const router = useRouter();

@@ -41,7 +41,7 @@ export default function Stock() {
     type: "",
     amount: 0,
     price: "",
-    purchase_date: "",
+    purchase_date: dayjs().format("DD/MM/YYYY"),
   });
 
   const router = useRouter();
