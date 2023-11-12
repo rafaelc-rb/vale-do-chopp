@@ -108,14 +108,14 @@ export default function Stock() {
   const handleSubmit = async () => {
     if (validateStockFields()) {
       try {
-        await postStock(stock);
-        const ok = await Swal.fire({
-          title: "Estoque adicionado com sucesso",
-          text: `O estoque de R$${stock.price} foi registrado!`,
-          icon: "success",
-        });
-        if (ok) {
-          router.push("/");
+        const response = await postStock(stock);
+        if (response.status === 200) {
+          const ok = await Swal.fire({
+            title: "Estoque adicionado com sucesso",
+            text: `O estoque de R$${stock.price} foi registrado!`,
+            icon: "success",
+          });
+          if (ok) router.push("/");
         }
       } catch (err) {
         Swal.fire({

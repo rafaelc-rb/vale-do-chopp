@@ -49,10 +49,9 @@ export default function Expense() {
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | SelectChangeEvent
     ) => {
-      let value = event.target.value as string;
-      if (prop === "price") {
-        value = formatCurrencyInput(value);
-      }
+      let value: string | number = event.target.value;
+      if (prop === "price") value = formatCurrencyInput(value);
+      else if (prop === "amount") value = Number(value);
       setExpense({ ...expense, [prop]: value });
     };
 
@@ -104,14 +103,14 @@ export default function Expense() {
   const handleSubmit = async () => {
     if (validateExpenseFields()) {
       try {
-        await postExpense(expense);
-        const ok = await Swal.fire({
-          title: "Despesa registrada com sucesso",
-          text: `A despesa de R$${expense.price} foi registrada!`,
-          icon: "success",
-        });
-        if (ok) {
-          router.push("/");
+        const response = await postExpense(expense);
+        if (response.status === 200) {
+          const ok = await Swal.fire({
+            title: "Despesa registrada com sucesso",
+            text: `A despesa de R$${expense.price} foi registrada!`,
+            icon: "success",
+          });
+          if (ok) router.push("/");
         }
       } catch (err) {
         Swal.fire({

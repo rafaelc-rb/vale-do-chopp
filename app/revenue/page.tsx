@@ -53,8 +53,9 @@ export default function Revenue() {
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | SelectChangeEvent
     ) => {
-      let value = event.target.value;
+      let value: string | number = event.target.value;
       if (prop === "price") value = formatCurrencyInput(value);
+      else if (prop === "amount") value = Number(value);
       else if (prop === "type") value = `${value}L`;
       setRevenue({ ...revenue, [prop]: value });
     };
@@ -107,14 +108,20 @@ export default function Revenue() {
   const handleSubmit = async () => {
     if (validateRevenueFields()) {
       try {
-        await postRevenue(revenue);
-        const ok = await Swal.fire({
-          title: "Receita registrada com sucesso",
-          text: `A receita de R$${revenue.price} foi registrada!`,
-          icon: "success",
-        });
-        if (ok) {
-          router.push("/");
+        const response = await postRevenue(revenue);
+        if (response.status === 200) {
+          const ok = await Swal.fire({
+            title: "Receita registrada com sucesso",
+            text: `A receita de R$${revenue.price} foi registrada!`,
+            icon: "success",
+          });
+          if (ok) router.push("/");
+        } else if (response.status === 404) {
+          Swal.fire({
+            title: `Sem estoque para barril de ${revenue.type}`,
+            text: `Adicione mais barris ao estoque para ser vendido.`,
+            icon: "error",
+          });
         }
       } catch (err) {
         Swal.fire({
