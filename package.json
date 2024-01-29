@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "att": "yarn && yarn prisma migrate dev",
+    "dev": "next dev | echo 'Vale do Chopp Manager iniciado!' | echo 'Para finalizar o sistema digite ctrl+C.'",
     "build": "yarn prisma db push && yarn prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
