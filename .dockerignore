@@ -2,8 +2,8 @@
 
 # dependencies
 
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 .yarn/install-state.gz
 
@@ -13,12 +13,12 @@
 
 # next.js
 
-/.next/
-/out/
+.next
+out/
 
 # production
 
-/build
+build
 
 # misc
 
