@@ -1,4 +1,3 @@
-import { LoadingIcon } from "@/components/LoadingIcon";
 import MainComponent from "@/components/main-component";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
@@ -16,7 +15,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <LoadingIcon />
         <MainComponent>{children}</MainComponent>
       </body>
     </html>
