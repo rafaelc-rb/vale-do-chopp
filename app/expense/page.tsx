@@ -1,28 +1,12 @@
 "use client";
-import {
-  Box,
-  Button,
-  InputAdornment,
-  Paper,
-  SelectChangeEvent,
-  TextField,
-  Typography,
-} from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Box, SelectChangeEvent } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-
-interface Expense {
-  item_name: string;
-  amount: number;
-  price: string;
-  purchase_date: string;
-}
+import { Expense } from "@/context/@types";
+import NewExpenseForm from "@/components/NewExpenseForm";
 
 async function postExpense(body: Expense) {
   const res = await fetch("api/expense", {
@@ -130,61 +114,12 @@ export default function Expense() {
         alignItems: "center",
       }}
     >
-      <Typography variant="h4" sx={{ alignSelf: "left" }}>
-        Nova Despesa
-      </Typography>
-      <Paper sx={{ padding: "1rem", width: "30vw" }}>
-        <Grid container spacing={2} rowSpacing={2}>
-          <Grid xs={8}>
-            <TextField
-              fullWidth
-              label="Nome do Item"
-              onChange={handleChange("item_name")}
-            />
-          </Grid>
-          <Grid xs={4}>
-            <TextField
-              label="Qtd"
-              type="number"
-              onChange={handleChange("amount")}
-            />
-          </Grid>
-          <Grid xs={6}>
-            <TextField
-              label="Valor Total"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">R$</InputAdornment>
-                ),
-              }}
-              value={expense.price}
-              onChange={handleChange("price")}
-            />
-          </Grid>
-          <Grid xs={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Data da compra"
-                openTo="month"
-                views={["year", "month", "day"]}
-                format="DD/MM/YYYY"
-                value={
-                  expense.purchase_date &&
-                  dayjs(expense.purchase_date, "DD/MM/YYYY").isValid()
-                    ? dayjs(expense.purchase_date, "DD/MM/YYYY")
-                    : null
-                }
-                onChange={handleDateChange("purchase_date")}
-              />
-            </LocalizationProvider>
-          </Grid>
-          <Grid xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="outlined" onClick={() => handleSubmit()}>
-              Salvar
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>
+      <NewExpenseForm
+        handleChange={handleChange}
+        handleDateChange={handleDateChange}
+        handleSubmit={handleSubmit}
+        expense={expense}
+      />
     </Box>
   );
 }

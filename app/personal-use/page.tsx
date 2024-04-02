@@ -1,5 +1,5 @@
 "use client";
-import StatisticsCard from "@/components/statistics-card";
+import StatisticsCard from "@/components/ui/statistics-card";
 import {
   Button,
   FormControl,

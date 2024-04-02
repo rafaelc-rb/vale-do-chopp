@@ -1,5 +1,5 @@
 "use client";
-import StatisticsCard from "@/components/statistics-card";
+import StatisticsCard from "@/components/ui/statistics-card";
 import Grid from "@mui/material/Unstable_Grid2/";
 import { useEffect, useState } from "react";
 
