@@ -2,6 +2,7 @@
 import {
   Box,
   Button,
+  IconButton,
   Modal,
   Paper,
   SelectChangeEvent,
@@ -9,7 +10,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TablePagination,
   TableRow,
@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Expense } from "@/context/@types";
 import NewExpenseForm from "@/components/new-expense-form";
-import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+import { DeleteOutlineRounded } from "@mui/icons-material";
 
 async function getExpense() {
   const res = await fetch("api/expense", {
@@ -39,9 +39,18 @@ async function postExpense(body: Expense) {
   return res;
 }
 
+async function deleteExpense(id: string) {
+  const res = await fetch("api/expense", {
+    method: "DELETE",
+    body: JSON.stringify({ id }),
+  });
+  return res;
+}
+
 export default function Expense() {
   const [expenses, setExpenses] = useState<Array<Expense>>([]);
   const [expense, setExpense] = useState<Expense>({
+    id: "",
     item_name: "",
     amount: 0,
     price: "",
@@ -154,7 +163,34 @@ export default function Expense() {
     }
   };
 
-  const columns = ["Item", "Quantidade", "Preço", "Data de compra"];
+  const handleDelete = async (id: string) => {
+    await Swal.fire({
+      title: "Deseja realmente deletar esta despesa?",
+      text: "Você não será capaz de reverter essa ação!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, delete!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await deleteExpense(id);
+          if (response.status === 200) {
+            toast.success("Despesa deletada com sucesso.");
+            router.push("/");
+          }
+        } catch (err) {
+          Swal.fire({
+            title: "Ocorreu um erro ao tentar registrar a despesa",
+            icon: "error",
+          });
+        }
+      }
+    });
+  };
+
+  const columns = ["Item", "Quantidade", "Preço", "Data de compra", "Ações"];
 
   return (
     <>
@@ -187,7 +223,9 @@ export default function Expense() {
           <Table>
             <TableHead>
               {columns.map((col) => (
-                <TableCell key={col}>{col}</TableCell>
+                <TableCell key={col} align={col === "Ações" ? "right" : "left"}>
+                  {col}
+                </TableCell>
               ))}
             </TableHead>
             <TableBody>
@@ -200,10 +238,15 @@ export default function Expense() {
                       <TableCell>{expense.amount} UN</TableCell>
                       <TableCell>R${expense.price}</TableCell>
                       <TableCell>{expense.purchase_date}</TableCell>
+                      <TableCell align="right">
+                        <IconButton onClick={() => handleDelete(expense.id)}>
+                          <DeleteOutlineRounded color="error" />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))}
               {expenses.length < 1 && (
-                <TableCell colSpan={4}>Nenhuma despesa encontrada.</TableCell>
+                <TableCell colSpan={5}>Nenhuma despesa encontrada.</TableCell>
               )}
             </TableBody>
           </Table>

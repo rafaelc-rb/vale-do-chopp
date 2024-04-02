@@ -33,3 +33,17 @@ export async function GET() {
         return new Response("Error",{status: 400})
     }   
 }
+
+export async function DELETE(request: NextRequest) {
+    const { id } = await request.json()
+    try {
+        await prisma.expense.delete({
+            where: {
+                id: id,
+            },
+        })
+        return new Response("Deleted successfully", {status: 200})
+    } catch (err){
+        return new Response("Error",{status: 400})
+    }
+}

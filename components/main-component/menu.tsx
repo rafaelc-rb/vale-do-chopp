@@ -24,7 +24,6 @@ import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import LocalDiningOutlinedIcon from "@mui/icons-material/LocalDiningOutlined";
 import { ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { ToastContainer } from "react-toastify";
 
 const drawerWidth = 240;
 
@@ -240,7 +239,6 @@ export default function MiniDrawer({ children }: { children: ReactNode }) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <ToastContainer />
         {children}
       </Box>
     </Box>
