@@ -198,7 +198,7 @@ export default function Revenue() {
             </LocalizationProvider>
           </Grid>
           <Grid xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="outlined" onClick={() => handleSubmit()}>
+            <Button variant="outlined" onClick={handleSubmit}>
               Salvar
             </Button>
           </Grid>

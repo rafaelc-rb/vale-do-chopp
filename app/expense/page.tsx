@@ -1,12 +1,35 @@
 "use client";
-import { Box, SelectChangeEvent } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Paper,
+  SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Expense } from "@/context/@types";
-import NewExpenseForm from "@/components/NewExpenseForm";
+import NewExpenseForm from "@/components/new-expense-form";
+import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+
+async function getExpense() {
+  const res = await fetch("api/expense", {
+    method: "GET",
+  });
+  return res.json();
+}
 
 async function postExpense(body: Expense) {
   const res = await fetch("api/expense", {
@@ -17,6 +40,7 @@ async function postExpense(body: Expense) {
 }
 
 export default function Expense() {
+  const [expenses, setExpenses] = useState<Array<Expense>>([]);
   const [expense, setExpense] = useState<Expense>({
     item_name: "",
     amount: 0,
@@ -25,6 +49,31 @@ export default function Expense() {
   });
 
   const router = useRouter();
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [open, setOpen] = useState(false);
+  const handleOpenRegister = () => setOpen(true);
+  const handleCloseRegister = () => setOpen(false);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  useEffect(() => {
+    getExpense().then((res) => setExpenses(res));
+  }, []);
 
   const handleChange =
     (prop: keyof Expense) =>
@@ -105,21 +154,86 @@ export default function Expense() {
     }
   };
 
+  const columns = ["Item", "Quantidade", "Preço", "Data de compra"];
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        alignItems: "center",
-      }}
-    >
-      <NewExpenseForm
-        handleChange={handleChange}
-        handleDateChange={handleDateChange}
-        handleSubmit={handleSubmit}
-        expense={expense}
-      />
-    </Box>
+    <>
+      <Modal
+        open={open}
+        onClose={handleCloseRegister}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <NewExpenseForm
+          handleChange={handleChange}
+          handleDateChange={handleDateChange}
+          handleSubmit={handleSubmit}
+          expense={expense}
+        />
+      </Modal>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
+        <Typography variant="h4" alignSelf="start">
+          Listagem das despesas
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              {columns.map((col) => (
+                <TableCell key={col}>{col}</TableCell>
+              ))}
+            </TableHead>
+            <TableBody>
+              {expenses.length > 0 &&
+                expenses
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((expense, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{expense.item_name}</TableCell>
+                      <TableCell>{expense.amount} UN</TableCell>
+                      <TableCell>R${expense.price}</TableCell>
+                      <TableCell>{expense.purchase_date}</TableCell>
+                    </TableRow>
+                  ))}
+              {expenses.length < 1 && (
+                <TableCell colSpan={4}>Nenhuma despesa encontrada.</TableCell>
+              )}
+            </TableBody>
+          </Table>
+          <Box
+            sx={{
+              width: "100%",
+              p: "0.5rem 0.5rem",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Button
+              variant="outlined"
+              onClick={handleOpenRegister}
+              sx={{ height: "auto" }}
+            >
+              Registrar nova despesa
+            </Button>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 100]}
+              component="div"
+              count={expenses.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Box>
+        </TableContainer>
+      </Box>
+    </>
   );
 }

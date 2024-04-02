@@ -27,11 +27,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        const expenses = await prisma.expense.findMany({
-            select:{
-                price: true
-            }
-        })
+        const expenses = await prisma.expense.findMany()
         return new Response(JSON.stringify(expenses))
     } catch (err) {
         return new Response("Error",{status: 400})

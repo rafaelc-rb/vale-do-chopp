@@ -197,7 +197,7 @@ export default function PersonalUse() {
             <MenuItem value={50}>50 litros</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="outlined" onClick={() => handleSubmitToto()}>
+        <Button variant="outlined" onClick={handleSubmitToto}>
           Salvar
         </Button>
       </Grid>
@@ -231,7 +231,7 @@ export default function PersonalUse() {
           </Select>
         </FormControl>
 
-        <Button variant="outlined" onClick={() => handleSubmitXuxu()}>
+        <Button variant="outlined" onClick={handleSubmitXuxu}>
           Salvar
         </Button>
       </Grid>
