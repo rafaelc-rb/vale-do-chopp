@@ -13,12 +13,28 @@ const expensesTable = () => (
   </Box>
 );
 
+const stockTable = () => (
+  <Box>
+    <Typography>Tabela de despesas ainda não implementada!</Typography>
+  </Box>
+);
+
+const personalUseTable = () => (
+  <Box>
+    <Typography>Tabela de despesas ainda não implementada!</Typography>
+  </Box>
+);
+
 export default function Log() {
   return (
     <>
-      <LabTabs tabNames={["Receitas", "Despesas"]}>
+      <LabTabs
+        tabNames={["Receitas", "Despesas", "Estoque", "Consumo próprio"]}
+      >
         {revenuesTable()}
         {expensesTable()}
+        {stockTable()}
+        {personalUseTable()}
       </LabTabs>
     </>
   );
