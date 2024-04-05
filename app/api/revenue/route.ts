@@ -56,14 +56,24 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        const revenues = await prisma.revenue.findMany({
-            select:{
-                price: true
-            }
-        })
+        const revenues = await prisma.revenue.findMany()
         return new Response(JSON.stringify(revenues))
     } catch (err) {
         console.error(err); // Log do erro
         return new Response("Error",{status: 400})
     }   
+}
+
+export async function DELETE(request: NextRequest) {
+    const { id } = await request.json()
+    try {
+        await prisma.revenue.delete({
+            where: {
+                id: id,
+            },
+        })
+        return new Response("Deleted successfully", {status: 200})
+    } catch (err){
+        return new Response("Error",{status: 400})
+    }
 }

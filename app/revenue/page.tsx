@@ -1,34 +1,37 @@
 "use client";
+import NewRevenueForm from "@/components/new-revenue-form";
+import { RevenueProps } from "@/context/@types";
+import { DeleteOutlineRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
+  IconButton,
+  Modal,
   Paper,
-  Select,
   SelectChangeEvent,
-  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
   Typography,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-interface Revenue {
-  type: string;
-  amount: number;
-  price: string;
-  date: string;
+async function getRevenue() {
+  const res = await fetch("api/revenue", {
+    method: "GET",
+  });
+  return res.json();
 }
 
-async function postRevenue(body: Revenue) {
+async function postRevenue(body: RevenueProps) {
   const res = await fetch("api/revenue", {
     method: "POST",
     body: JSON.stringify(body),
@@ -36,8 +39,18 @@ async function postRevenue(body: Revenue) {
   return res;
 }
 
+async function deleteRevenue(id: string) {
+  const res = await fetch("api/revenue", {
+    method: "DELETE",
+    body: JSON.stringify({ id }),
+  });
+  return res;
+}
+
 export default function Revenue() {
-  const [revenue, setRevenue] = useState<Revenue>({
+  const [revenues, setRevenues] = useState<Array<RevenueProps>>([]);
+  const [revenue, setRevenue] = useState<RevenueProps>({
+    id: "",
     type: "",
     amount: 0,
     price: "",
@@ -46,8 +59,33 @@ export default function Revenue() {
 
   const router = useRouter();
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [open, setOpen] = useState(false);
+  const handleOpenRegister = () => setOpen(true);
+  const handleCloseRegister = () => setOpen(false);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  useEffect(() => {
+    getRevenue().then((res) => setRevenues(res));
+  }, []);
+
   const handleChange =
-    (prop: keyof Revenue) =>
+    (prop: keyof RevenueProps) =>
     (
       event:
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -69,12 +107,13 @@ export default function Revenue() {
     return formattedValue;
   }
 
-  const handleDateChange = (prop: keyof Revenue) => (value: Dayjs | null) => {
-    setRevenue({
-      ...revenue,
-      [prop]: value?.format("DD/MM/YYYY") || "",
-    });
-  };
+  const handleDateChange =
+    (prop: keyof RevenueProps) => (value: Dayjs | null) => {
+      setRevenue({
+        ...revenue,
+        [prop]: value?.format("DD/MM/YYYY") || "",
+      });
+    };
 
   const validateRevenueFields = () => {
     const errors = {
@@ -132,78 +171,120 @@ export default function Revenue() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    await Swal.fire({
+      title: "Deseja realmente deletar esta receita?",
+      text: "Você não será capaz de reverter essa ação!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, delete!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await deleteRevenue(id);
+          if (response.status === 200) {
+            toast.success("Receita deletada com sucesso.");
+            router.push("/revenue");
+          }
+        } catch (err) {
+          Swal.fire({
+            title: "Ocorreu um erro ao tentar deletar a receita",
+            icon: "error",
+          });
+        }
+      }
+    });
+  };
+
+  const columns = ["Tipo", "Quantidade", "Preço", "Data de compra", "Ações"];
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        alignItems: "center",
-      }}
-    >
-      <Typography variant="h4" sx={{ alignSelf: "left" }}>
-        Nova Receita
-      </Typography>
-      <Paper sx={{ padding: "1rem", width: "30vw" }}>
-        <Grid container spacing={2} rowSpacing={2}>
-          <Grid xs={8}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Barril</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={revenue.type.split("L")[0]}
-                label="Barril"
-                onChange={handleChange("type")}
-              >
-                <MenuItem value={10}>10 litros</MenuItem>
-                <MenuItem value={30}>30 litros</MenuItem>
-                <MenuItem value={50}>50 litros</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid xs={4}>
-            <TextField
-              label="Qtd"
-              type="number"
-              onChange={handleChange("amount")}
-            />
-          </Grid>
-          <Grid xs={6}>
-            <TextField
-              label="Valor"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">R$</InputAdornment>
-                ),
-              }}
-              value={revenue.price}
-              onChange={handleChange("price")}
-            />
-          </Grid>
-          <Grid xs={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Data da venda"
-                openTo="month"
-                views={["year", "month", "day"]}
-                format="DD/MM/YYYY"
-                value={
-                  revenue.date && dayjs(revenue.date, "DD/MM/YYYY").isValid()
-                    ? dayjs(revenue.date, "DD/MM/YYYY")
-                    : null
-                }
-                onChange={handleDateChange("date")}
-              />
-            </LocalizationProvider>
-          </Grid>
-          <Grid xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="outlined" onClick={handleSubmit}>
-              Salvar
+    <>
+      <Modal
+        open={open}
+        onClose={handleCloseRegister}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <NewRevenueForm
+          handleChange={handleChange}
+          handleDateChange={handleDateChange}
+          handleSubmit={handleSubmit}
+          revenue={revenue}
+        />
+      </Modal>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4" alignSelf="start">
+          Listagem das receitas
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              {columns.map((col) => (
+                <TableCell key={col} align={col === "Ações" ? "right" : "left"}>
+                  {col}
+                </TableCell>
+              ))}
+            </TableHead>
+            <TableBody>
+              {revenues.length > 0 &&
+                revenues
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((revenue, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{revenue.type}</TableCell>
+                      <TableCell>{revenue.amount} UN</TableCell>
+                      <TableCell>R${revenue.price}</TableCell>
+                      <TableCell>{revenue.date}</TableCell>
+                      <TableCell align="right">
+                        <IconButton onClick={() => handleDelete(revenue.id)}>
+                          <DeleteOutlineRounded color="error" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              {revenues.length < 1 && (
+                <TableCell colSpan={5}>Nenhuma receita encontrada.</TableCell>
+              )}
+            </TableBody>
+          </Table>
+          <Box
+            sx={{
+              width: "100%",
+              p: "0.5rem 0.5rem",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Button
+              variant="outlined"
+              onClick={handleOpenRegister}
+              sx={{ height: "auto" }}
+            >
+              Registrar nova receita
             </Button>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Box>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 100]}
+              component="div"
+              count={revenues.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Box>
+        </TableContainer>
+      </Box>
+    </>
   );
 }

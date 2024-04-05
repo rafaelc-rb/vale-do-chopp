@@ -1,8 +1,12 @@
-import { ExpenseProps } from "@/context/@types";
+import { RevenueProps } from "@/context/@types";
 import {
   Button,
+  FormControl,
   InputAdornment,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   SelectChangeEvent,
   TextField,
   Typography,
@@ -13,26 +17,26 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent } from "react";
 
-interface NewExpenseFormProps {
+interface NewRevenueFormProps {
   handleChange: (
-    prop: keyof ExpenseProps
+    prop: keyof RevenueProps
   ) => (
     event:
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       | SelectChangeEvent
   ) => void;
-  handleDateChange: (prop: keyof ExpenseProps) => (value: Dayjs | null) => void;
-  expense: ExpenseProps;
+  handleDateChange: (prop: keyof RevenueProps) => (value: Dayjs | null) => void;
+  revenue: RevenueProps;
   handleSubmit: () => void;
 }
 
-export default function NewExpenseForm(props: NewExpenseFormProps) {
+export default function NewRevenueForm(props: NewRevenueFormProps) {
   const {
     handleChange,
     handleDateChange,
     handleSubmit,
-    expense,
-  }: NewExpenseFormProps = props;
+    revenue,
+  }: NewRevenueFormProps = props;
   return (
     <Paper
       sx={{
@@ -44,15 +48,24 @@ export default function NewExpenseForm(props: NewExpenseFormProps) {
       }}
     >
       <Typography variant="h4" sx={{ alignSelf: "left" }}>
-        Nova Despesa
+        Nova Receita
       </Typography>
       <Grid container spacing={2} rowSpacing={2}>
         <Grid xs={8}>
-          <TextField
-            fullWidth
-            label="Nome do Item"
-            onChange={handleChange("item_name")}
-          />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Barril</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={revenue.type.split("L")[0]}
+              label="Barril"
+              onChange={handleChange("type")}
+            >
+              <MenuItem value={10}>10 litros</MenuItem>
+              <MenuItem value={30}>30 litros</MenuItem>
+              <MenuItem value={50}>50 litros</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid xs={4}>
           <TextField
@@ -63,30 +76,29 @@ export default function NewExpenseForm(props: NewExpenseFormProps) {
         </Grid>
         <Grid xs={6}>
           <TextField
-            label="Valor Total"
+            label="Valor"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">R$</InputAdornment>
               ),
             }}
-            value={expense.price}
+            value={revenue.price}
             onChange={handleChange("price")}
           />
         </Grid>
         <Grid xs={6}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Data da compra"
+              label="Data da venda"
               openTo="month"
               views={["year", "month", "day"]}
               format="DD/MM/YYYY"
               value={
-                expense.purchase_date &&
-                dayjs(expense.purchase_date, "DD/MM/YYYY").isValid()
-                  ? dayjs(expense.purchase_date, "DD/MM/YYYY")
+                revenue.date && dayjs(revenue.date, "DD/MM/YYYY").isValid()
+                  ? dayjs(revenue.date, "DD/MM/YYYY")
                   : null
               }
-              onChange={handleDateChange("purchase_date")}
+              onChange={handleDateChange("date")}
             />
           </LocalizationProvider>
         </Grid>

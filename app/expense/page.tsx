@@ -20,9 +20,9 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import { Expense } from "@/context/@types";
 import NewExpenseForm from "@/components/new-expense-form";
 import { DeleteOutlineRounded } from "@mui/icons-material";
+import { ExpenseProps } from "@/context/@types";
 
 async function getExpense() {
   const res = await fetch("api/expense", {
@@ -31,7 +31,7 @@ async function getExpense() {
   return res.json();
 }
 
-async function postExpense(body: Expense) {
+async function postExpense(body: ExpenseProps) {
   const res = await fetch("api/expense", {
     method: "POST",
     body: JSON.stringify(body),
@@ -48,8 +48,8 @@ async function deleteExpense(id: string) {
 }
 
 export default function Expense() {
-  const [expenses, setExpenses] = useState<Array<Expense>>([]);
-  const [expense, setExpense] = useState<Expense>({
+  const [expenses, setExpenses] = useState<Array<ExpenseProps>>([]);
+  const [expense, setExpense] = useState<ExpenseProps>({
     id: "",
     item_name: "",
     amount: 0,
@@ -85,7 +85,7 @@ export default function Expense() {
   }, []);
 
   const handleChange =
-    (prop: keyof Expense) =>
+    (prop: keyof ExpenseProps) =>
     (
       event:
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -106,12 +106,13 @@ export default function Expense() {
     return formattedValue;
   }
 
-  const handleDateChange = (prop: keyof Expense) => (value: Dayjs | null) => {
-    setExpense({
-      ...expense,
-      [prop]: value?.format("DD/MM/YYYY") || "",
-    });
-  };
+  const handleDateChange =
+    (prop: keyof ExpenseProps) => (value: Dayjs | null) => {
+      setExpense({
+        ...expense,
+        [prop]: value?.format("DD/MM/YYYY") || "",
+      });
+    };
 
   const validateExpenseFields = () => {
     const errors = {
@@ -178,11 +179,11 @@ export default function Expense() {
           const response = await deleteExpense(id);
           if (response.status === 200) {
             toast.success("Despesa deletada com sucesso.");
-            router.push("/");
+            router.push("/expense");
           }
         } catch (err) {
           Swal.fire({
-            title: "Ocorreu um erro ao tentar registrar a despesa",
+            title: "Ocorreu um erro ao tentar deletar a despesa",
             icon: "error",
           });
         }
