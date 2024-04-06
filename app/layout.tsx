@@ -2,6 +2,7 @@ import MainComponent from "@/components/main-component";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Vale do Chopp",

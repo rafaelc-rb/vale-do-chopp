@@ -66,6 +66,8 @@ export default function Expense() {
   const handleOpenRegister = () => setOpen(true);
   const handleCloseRegister = () => setOpen(false);
 
+  const [realoadRequest, setRealoadRequest] = useState<boolean>(false);
+
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -82,7 +84,7 @@ export default function Expense() {
 
   useEffect(() => {
     getExpense().then((res) => setExpenses(res));
-  }, []);
+  }, [realoadRequest]);
 
   const handleChange =
     (prop: keyof ExpenseProps) =>
@@ -148,12 +150,11 @@ export default function Expense() {
       try {
         const response = await postExpense(expense);
         if (response.status === 200) {
-          const ok = await Swal.fire({
-            title: "Despesa registrada com sucesso",
-            text: `A despesa de R$${expense.price} foi registrada!`,
-            icon: "success",
-          });
-          if (ok) router.push("/");
+          setRealoadRequest(!realoadRequest);
+          toast.success(
+            `A despesa de R$${expense.price} foi registrada com sucesso!`
+          );
+          setOpen(false);
         }
       } catch (err) {
         Swal.fire({
@@ -162,6 +163,7 @@ export default function Expense() {
         });
       }
     }
+    setOpen(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -178,8 +180,8 @@ export default function Expense() {
         try {
           const response = await deleteExpense(id);
           if (response.status === 200) {
+            setRealoadRequest(!realoadRequest);
             toast.success("Despesa deletada com sucesso.");
-            router.push("/expense");
           }
         } catch (err) {
           Swal.fire({
@@ -200,7 +202,12 @@ export default function Expense() {
         onClose={handleCloseRegister}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 3,
+        }}
       >
         <NewExpenseForm
           handleChange={handleChange}

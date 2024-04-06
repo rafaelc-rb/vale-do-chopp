@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
             data: {
                 item_name: `Barril de ${stock.type}`,
                 amount: stock.amount,
-                price: stock.price,
+                price: '0.00',
                 purchase_date: stock.purchase_date,
             }
         })
@@ -52,4 +52,18 @@ export async function GET() {
     } catch (err) {
         return new Response("Error",{status: 400})
     }   
+}
+
+export async function DELETE(request: NextRequest) {
+    const { id } = await request.json()
+    try {
+        await prisma.stock.delete({
+            where: {
+                id: id,
+            },
+        })
+        return new Response("Deleted successfully", {status: 200})
+    } catch (err){
+        return new Response("Error",{status: 400})
+    }
 }

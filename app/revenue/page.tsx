@@ -66,6 +66,8 @@ export default function Revenue() {
   const handleOpenRegister = () => setOpen(true);
   const handleCloseRegister = () => setOpen(false);
 
+  const [realoadRequest, setRealoadRequest] = useState<boolean>(false);
+
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -82,7 +84,7 @@ export default function Revenue() {
 
   useEffect(() => {
     getRevenue().then((res) => setRevenues(res));
-  }, []);
+  }, [realoadRequest]);
 
   const handleChange =
     (prop: keyof RevenueProps) =>
@@ -149,12 +151,11 @@ export default function Revenue() {
       try {
         const response = await postRevenue(revenue);
         if (response.status === 200) {
-          const ok = await Swal.fire({
-            title: "Receita registrada com sucesso",
-            text: `A receita de R$${revenue.price} foi registrada!`,
-            icon: "success",
-          });
-          if (ok) router.push("/");
+          setRealoadRequest(!realoadRequest);
+          toast.success(
+            `A receita de R$${revenue.price} foi registrada com sucesso!`
+          );
+          setOpen(false);
         } else if (response.status === 404) {
           Swal.fire({
             title: `Sem estoque para barril de ${revenue.type}`,
@@ -185,8 +186,8 @@ export default function Revenue() {
         try {
           const response = await deleteRevenue(id);
           if (response.status === 200) {
+            setRealoadRequest(!realoadRequest);
             toast.success("Receita deletada com sucesso.");
-            router.push("/revenue");
           }
         } catch (err) {
           Swal.fire({
@@ -207,7 +208,12 @@ export default function Revenue() {
         onClose={handleCloseRegister}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 3,
+        }}
       >
         <NewRevenueForm
           handleChange={handleChange}

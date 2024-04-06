@@ -40,15 +40,15 @@ export default function NewRevenueForm(props: NewRevenueFormProps) {
   return (
     <Paper
       sx={{
-        padding: "1rem",
-        width: "30vw",
+        padding: "2rem 3rem",
+        width: "40vw",
         display: "flex",
         flexDirection: "column",
         gap: "1rem",
       }}
     >
       <Typography variant="h4" sx={{ alignSelf: "left" }}>
-        Nova Receita
+        Nova receita
       </Typography>
       <Grid container spacing={2} rowSpacing={2}>
         <Grid xs={8}>

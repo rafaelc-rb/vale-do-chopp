@@ -67,11 +67,26 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
     const { id } = await request.json()
     try {
-        await prisma.revenue.delete({
-            where: {
-                id: id,
-            },
-        })
+        const rev = await prisma.revenue.findUnique(id)
+
+        if (rev) {
+            await prisma.revenue.delete({
+                where: {
+                    id: id,
+                },
+            })
+    
+            await prisma.stock.create({
+                data: {
+                    type: rev.type,
+                    amount: rev.amount,
+                    price: rev.price,
+                    purchase_date: rev.date,
+                }
+            })
+        }
+
+
         return new Response("Deleted successfully", {status: 200})
     } catch (err){
         return new Response("Error",{status: 400})

@@ -49,6 +49,7 @@ export default function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          gap: "1rem",
         }}
       >
         <StatisticsCard title="Receitas" amount={handleSumPrices(revenues)} />
