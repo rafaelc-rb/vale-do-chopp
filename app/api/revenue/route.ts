@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
                     amount: revenue.amount,
                     price: revenue.price,
                     date: revenue.date,
+                    expenseId: stock.expenseId
                 }
             })
         } else {
@@ -67,22 +68,15 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
     const { id } = await request.json()
     try {
-        const rev = await prisma.revenue.findUnique(id)
-
+        const rev = await prisma.revenue.findUnique({
+            where: { id: id }
+        })
+        
         if (rev) {
             await prisma.revenue.delete({
                 where: {
                     id: id,
                 },
-            })
-            
-            const newExpense = await prisma.expense.create({
-                data: {
-                    item_name: `Barril de ${rev.type}`,
-                    amount: rev.amount,
-                    price: rev.price,
-                    purchase_date: rev.date,
-                }
             })
     
             await prisma.stock.create({
@@ -91,14 +85,14 @@ export async function DELETE(request: NextRequest) {
                     amount: rev.amount,
                     price: rev.price,
                     purchase_date: rev.date,
-                    expenseId: newExpense.id
+                    expenseId: rev.expenseId
                 }
             })
         }
 
 
         return new Response("Deleted successfully", {status: 200})
-    } catch (err){
-        return new Response("Error",{status: 400})
+    } catch (err:any){
+        return new Response(err.message, {status: 400})
     }
 }

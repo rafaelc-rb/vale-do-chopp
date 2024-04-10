@@ -60,7 +60,9 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
     const { id } = await request.json()
     try {
-        const deletedItem = await prisma.stock.findUnique(id)
+        const deletedItem = await prisma.stock.findUnique({
+            where: { id: id }
+        })
 
         if(deletedItem){ 
             await prisma.stock.delete({
