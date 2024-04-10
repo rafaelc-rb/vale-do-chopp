@@ -17,18 +17,18 @@ model Revenue {
   price     String
   date      String
   expense   Expense @relation(fields: [expenseId], references: [id])
-  expenseId String  @unique
+  expenseId String
 }
 
 model Expense {
-  id            String       @id @default(uuid())
+  id            String        @id @default(uuid())
   item_name     String
   amount        Int
   price         String
   purchase_date String
-  stock         Stock?
-  revenue       Revenue?
-  personalUse   PersonalUse?
+  stock         Stock[]
+  revenue       Revenue[]
+  personalUse   PersonalUse[]
 }
 
 model Stock {
@@ -38,7 +38,7 @@ model Stock {
   price         String
   purchase_date String
   expense       Expense @relation(fields: [expenseId], references: [id])
-  expenseId     String  @unique
+  expenseId     String
 }
 
 model PersonalUse {
@@ -48,7 +48,7 @@ model PersonalUse {
   date      String
   amount    Int
   expense   Expense @relation(fields: [expenseId], references: [id])
-  expenseId String  @unique
+  expenseId String
 }
 
 model Log {
