@@ -66,7 +66,7 @@ export default function PersonalUse() {
     who: "Toto",
     type: "",
     amount: 0,
-    date: "",
+    date: dayjs().format("DD/MM/YYYY"),
   });
 
   const [xuxuUse, setXuxuUse] = useState<PersonalUseProps>({
@@ -74,7 +74,7 @@ export default function PersonalUse() {
     who: "Xuxu",
     type: "",
     amount: 0,
-    date: "",
+    date: dayjs().format("DD/MM/YYYY"),
   });
 
   const [page, setPage] = useState(0);
@@ -137,11 +137,13 @@ export default function PersonalUse() {
     const errors = {
       type: !who.type,
       amount: !who.amount || who.amount < 1,
+      date: !who.date,
     };
 
     const messageHandler = {
       type: "Barril",
       amount: "Quantidade",
+      date: "Data da venda",
     };
 
     const emptyFields = Object.keys(errors)
