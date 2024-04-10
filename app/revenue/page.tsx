@@ -156,6 +156,7 @@ export default function Revenue() {
             `A receita de R$${revenue.price} foi registrada com sucesso!`
           );
           setOpen(false);
+          window.location.reload();
         } else if (response.status === 404) {
           Swal.fire({
             title: `Sem estoque para barril de ${revenue.type}`,

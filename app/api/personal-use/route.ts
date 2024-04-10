@@ -64,7 +64,7 @@ export async function GET() {
                 useSummary.push({who: use.who, type: use.type, amount: use.amount});
             }
         });
-        return new Response(JSON.stringify(useSummary))
+        return new Response(JSON.stringify({useSummary: useSummary, uses: uses}))
     } catch (err) {
         return new Response("Error",{status: 400})
     }   

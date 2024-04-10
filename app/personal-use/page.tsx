@@ -1,13 +1,26 @@
 "use client";
+import NewTotoUse from "@/components/new-toto-use";
 import StatisticsCard from "@/components/ui/statistics-card";
+import { DeleteOutlineRounded } from "@mui/icons-material";
 import {
+  Box,
   Button,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/";
 import { useRouter } from "next/navigation";
@@ -16,6 +29,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 export interface PersonalUseProps {
+  id: string;
   who: string;
   type: string;
   amount: number;
@@ -39,25 +53,49 @@ async function getUses() {
 export default function PersonalUse() {
   const [totoUseQtd, setTotoUseQtd] = useState<Array<PersonalUseProps>>();
   const [xuxuUseQtd, setXuxuUseQtd] = useState<Array<PersonalUseProps>>();
+  const [uses, setUses] = useState<Array<PersonalUseProps>>([]);
+
   const [totoUse, setTotoUse] = useState<PersonalUseProps>({
+    id: "",
     who: "Toto",
     type: "",
     amount: 0,
   });
 
   const [xuxuUse, setXuxuUse] = useState<PersonalUseProps>({
+    id: "",
     who: "Xuxu",
     type: "",
     amount: 0,
   });
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const router = useRouter();
 
   useEffect(() => {
     getUses().then((uses) => {
-      if (!uses) return;
-      setTotoUseQtd(uses.filter((e: PersonalUseProps) => e.who === "Toto"));
-      setXuxuUseQtd(uses.filter((e: PersonalUseProps) => e.who === "Xuxu"));
+      setTotoUseQtd(
+        uses.useSummary.filter((e: PersonalUseProps) => e.who === "Toto")
+      );
+      setXuxuUseQtd(
+        uses.useSummary.filter((e: PersonalUseProps) => e.who === "Xuxu")
+      );
+      setUses(uses.uses);
     });
   }, []);
 
@@ -117,11 +155,8 @@ export default function PersonalUse() {
       try {
         const response = await postPersonalUse(totoUse);
         if (response.status === 200) {
-          const ok = await Swal.fire({
-            title: "Consumo registrado com sucesso",
-            icon: "success",
-          });
-          if (ok) router.refresh();
+          toast.success("Consumo registrado com sucesso");
+          window.location.reload();
         } else if (response.status === 404) {
           Swal.fire({
             title: `Sem estoque para barril de ${totoUse.type}`,
@@ -144,11 +179,8 @@ export default function PersonalUse() {
       try {
         const response = await postPersonalUse(xuxuUse);
         if (response.status === 200) {
-          const ok = await Swal.fire({
-            title: "Consumo registrado com sucesso",
-            icon: "success",
-          });
-          if (ok) router.refresh();
+          toast.success("Consumo registrado com sucesso");
+          window.location.reload();
         } else if (response.status === 404) {
           Swal.fire({
             title: `Sem estoque para barril de ${xuxuUse.type}`,
@@ -166,10 +198,17 @@ export default function PersonalUse() {
     }
   };
 
+  const columns = ["Usuário", "Barril", "Quantidade", "Ações"];
+
+  const handleDeleteUse = (useId: string) => {
+    toast.info("Em breve, estará disponível!");
+  };
+
   return (
-    <Grid container spacing={12} rowSpacing={2} justifyContent="center">
+    <Grid container spacing={12} rowSpacing={5} justifyContent="center">
       <Grid
-        xs={5}
+        xs={12}
+        lg={5}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -177,32 +216,16 @@ export default function PersonalUse() {
           gap: "1rem",
         }}
       >
-        <StatisticsCard title="Toto" personalUses={totoUseQtd} />
-        <TextField
-          label="Quantidade de barris"
-          type="number"
-          onChange={handleChangeToto("amount")}
+        <NewTotoUse
+          totoUseQtd={totoUseQtd}
+          handleChangeToto={handleChangeToto}
+          totoUse={totoUse}
+          handleSubmitToto={handleSubmitToto}
         />
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Tipo do barril</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={totoUse.type.split("L")[0]}
-            label="Tipo do barril"
-            onChange={handleChangeToto("type")}
-          >
-            <MenuItem value={10}>10 litros</MenuItem>
-            <MenuItem value={30}>30 litros</MenuItem>
-            <MenuItem value={50}>50 litros</MenuItem>
-          </Select>
-        </FormControl>
-        <Button variant="outlined" onClick={handleSubmitToto}>
-          Salvar
-        </Button>
       </Grid>
       <Grid
-        xs={5}
+        xs={12}
+        lg={5}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -234,6 +257,53 @@ export default function PersonalUse() {
         <Button variant="outlined" onClick={handleSubmitXuxu}>
           Salvar
         </Button>
+      </Grid>
+      <Grid xs={12}>
+        <Typography variant="h4" alignSelf="start" m="0 0rem 0.5rem 1rem">
+          Listagem das usos pessoais
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              {columns.map((col) => (
+                <TableCell key={col} align={col === "Ações" ? "right" : "left"}>
+                  {col}
+                </TableCell>
+              ))}
+            </TableHead>
+            <TableBody>
+              {uses.length > 0 &&
+                uses
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((use, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{use.who}</TableCell>
+                      <TableCell>{use.type}</TableCell>
+                      <TableCell>{use.amount} UN</TableCell>
+                      <TableCell align="right">
+                        <IconButton onClick={() => handleDeleteUse(use.id)}>
+                          <DeleteOutlineRounded color="error" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              {uses.length < 1 && (
+                <TableCell colSpan={5}>
+                  Nenhum uso pessoal encontrado.
+                </TableCell>
+              )}
+            </TableBody>
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={uses.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableContainer>
       </Grid>
     </Grid>
   );
