@@ -78,18 +78,23 @@ export async function DELETE(request: NextRequest) {
                     id: id,
                 },
             })
+
+            const expense = await prisma.expense.findUnique({
+                where: {
+                    id: rev.expenseId,
+                }
+            })
     
             await prisma.stock.create({
                 data: {
                     type: rev.type,
                     amount: rev.amount,
-                    price: rev.price,
+                    price: expense?.price || rev.price,
                     purchase_date: rev.date,
                     expenseId: rev.expenseId
                 }
             })
         }
-
 
         return new Response("Deleted successfully", {status: 200})
     } catch (err:any){
