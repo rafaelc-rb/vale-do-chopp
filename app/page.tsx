@@ -32,7 +32,7 @@ export default function Home() {
   useEffect(() => {
     getRevenue().then((res) => setRevenues(res));
     getExpense().then((res) => setExpenses(res));
-    getStock().then((res) => setStock(res));
+    getStock().then((res) => setStock(res.summary));
   }, []);
 
   const handleSumPrices = (pricesArray: { price: number }[] | undefined) => {

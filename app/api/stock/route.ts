@@ -11,23 +11,25 @@ type Stock = {
 export async function POST(request: NextRequest) {
     const stock: Stock = await request.json()
     try {
-        await prisma.stock.create({
+        const newExpense = await prisma.expense.create({
             data: {
-                type: stock.type,
+                item_name: `Barril de ${stock.type}`,
                 amount: stock.amount,
                 price: stock.price,
                 purchase_date: stock.purchase_date,
             }
         })
 
-        await prisma.expense.create({
+        await prisma.stock.create({
             data: {
-                item_name: `Barril de ${stock.type}`,
+                type: stock.type,
                 amount: stock.amount,
-                price: '0.00',
+                price: stock.price,
                 purchase_date: stock.purchase_date,
+                expenseId: newExpense.id
             }
         })
+
 
         return new Response("Created successfully", {status: 200})
     } catch (err){
@@ -48,7 +50,8 @@ export async function GET() {
                 stockSummary.push({type: stock.type, amount: stock.amount});
             }
         });
-        return new Response(JSON.stringify(stockSummary))
+
+        return new Response(JSON.stringify({stock: stocks, summary: stockSummary}))
     } catch (err) {
         return new Response("Error",{status: 400})
     }   
@@ -57,11 +60,23 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
     const { id } = await request.json()
     try {
-        await prisma.stock.delete({
-            where: {
-                id: id,
-            },
-        })
+        const deletedItem = await prisma.stock.findUnique(id)
+
+        if( deletedItem ){ 
+            await prisma.stock.delete({
+                where: {
+                    id: id,
+                },
+            })
+
+            await prisma.expense.delete({
+                where: {
+                    id: deletedItem.expenseId,
+                }
+            })
+        }
+
+
         return new Response("Deleted successfully", {status: 200})
     } catch (err){
         return new Response("Error",{status: 400})

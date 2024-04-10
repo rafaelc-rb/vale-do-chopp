@@ -37,6 +37,21 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
     const { id } = await request.json()
     try {
+
+        const stockItem = await prisma.stock.findUnique({
+            where: {
+                expenseId: id,
+            }
+        })
+
+        if (stockItem) {
+            await prisma.stock.delete({
+                where: {
+                    id: stockItem.id,
+                }
+            })
+        }
+
         await prisma.expense.delete({
             where: {
                 id: id,

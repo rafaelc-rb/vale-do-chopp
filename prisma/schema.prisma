@@ -24,14 +24,17 @@ model Expense {
   amount        Int
   price         String
   purchase_date String
+  stock         Stock?
 }
 
 model Stock {
-  id            String @id @default(uuid())
+  id            String  @id @default(uuid())
   type          String
   amount        Int
   price         String
   purchase_date String
+  expense       Expense @relation(fields: [expenseId], references: [id])
+  expenseId     String  @unique
 }
 
 model PersonalUse {
