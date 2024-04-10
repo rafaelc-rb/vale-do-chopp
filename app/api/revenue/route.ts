@@ -18,15 +18,18 @@ export async function POST(request: NextRequest) {
         })
 
         if(stock && stock.amount >= revenue.amount){
+
             // Atualize a quantidade de estoque corretamente
             await prisma.stock.update({
                 where: {
                     id: stock.id
                 },
                 data: {
-                    amount: stock.amount - revenue.amount
+                    amount: stock.amount - revenue.amount,
+                    price: String((Number(stock.price) / stock.amount) * (stock.amount - revenue.amount))
                 }
             })
+
             // Verifique se a quantidade de estoque é zero
             if(stock.amount - 1 === 0) {
                 await prisma.stock.delete({
@@ -35,6 +38,7 @@ export async function POST(request: NextRequest) {
                     }
                 })
             }
+
             await prisma.revenue.create({
                 data: {
                     type: revenue.type,
@@ -49,9 +53,9 @@ export async function POST(request: NextRequest) {
         }
 
         return new Response("Created successfully", {status: 200})
-    } catch (err){
+    } catch (err: any){
         console.error(err); // Log do erro
-        return new Response("Error",{status: 400})
+        return new Response(err.message,{status: 400})
     }
 }
 
@@ -89,7 +93,7 @@ export async function DELETE(request: NextRequest) {
                 data: {
                     type: rev.type,
                     amount: rev.amount,
-                    price: expense?.price || rev.price,
+                    price: String(Number(expense?.price) / rev.amount) || rev.price,
                     purchase_date: rev.date,
                     expenseId: rev.expenseId
                 }

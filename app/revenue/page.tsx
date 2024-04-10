@@ -19,7 +19,6 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -56,8 +55,6 @@ export default function Revenue() {
     price: "",
     date: dayjs().format("DD/MM/YYYY"),
   });
-
-  const router = useRouter();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -156,7 +153,7 @@ export default function Revenue() {
             `A receita de R$${revenue.price} foi registrada com sucesso!`
           );
           setOpen(false);
-          window.location.reload();
+          setRealoadRequest(!realoadRequest);
         } else if (response.status === 404) {
           Swal.fire({
             title: `Sem estoque para barril de ${revenue.type}`,
