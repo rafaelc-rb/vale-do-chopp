@@ -5,6 +5,7 @@ type PersonalUse = {
     who: string,
     type: string,
     amount: number,
+    date: string,
 }
 
 export async function POST(request: NextRequest) {
@@ -26,13 +27,6 @@ export async function POST(request: NextRequest) {
                     amount: stock.amount - personalUse.amount
                 }
             })
-            await prisma.personalUse.create({
-                data: {
-                    who: personalUse.who,
-                    type: personalUse.type,
-                    amount: personalUse.amount,
-                }
-            })
             // Verifique se a quantidade de estoque é zero
             if(stock.amount - 1 === 0) {
                 await prisma.stock.delete({
@@ -41,6 +35,15 @@ export async function POST(request: NextRequest) {
                     }
                 })
             }
+            await prisma.personalUse.create({
+                data: {
+                    who: personalUse.who,
+                    type: personalUse.type,
+                    amount: personalUse.amount,
+                    date: personalUse.date,
+                    expenseId: stock.expenseId,
+                }
+            })
         } else {
             return new Response("No stock",{status : 404})
         }
@@ -69,3 +72,41 @@ export async function GET() {
         return new Response("Error",{status: 400})
     }   
 }
+
+export async function DELETE(request: NextRequest) {
+    const { id } = await request.json()
+    try {
+        const use = await prisma.personalUse.findUnique({
+            where: { id: id }
+        })
+        
+        if (use) {
+            await prisma.personalUse.delete({
+                where: {
+                    id: id,
+                },
+            })
+
+            const expense = await prisma.expense.findUnique({
+                where: {
+                    id: use.expenseId,
+                }
+            })
+    
+            await prisma.stock.create({
+                data: {
+                    type: use.type,
+                    amount: use.amount,
+                    price: expense?.price || '0.00',
+                    purchase_date: use.date,
+                    expenseId: use.expenseId
+                }
+            })
+        }
+
+        return new Response("Deleted successfully", {status: 200})
+    } catch (err:any){
+        return new Response(err.message, {status: 400})
+    }
+}
+

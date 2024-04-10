@@ -1,5 +1,6 @@
 "use client";
 import NewTotoUse from "@/components/new-toto-use";
+import NewXuxuUse from "@/components/new-xuxu-use";
 import StatisticsCard from "@/components/ui/statistics-card";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import {
@@ -12,6 +13,7 @@ import {
   Paper,
   Select,
   SelectChangeEvent,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +25,9 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -33,6 +38,7 @@ export interface PersonalUseProps {
   who: string;
   type: string;
   amount: number;
+  date: string;
 }
 
 async function postPersonalUse(body: PersonalUseProps) {
@@ -60,6 +66,7 @@ export default function PersonalUse() {
     who: "Toto",
     type: "",
     amount: 0,
+    date: "",
   });
 
   const [xuxuUse, setXuxuUse] = useState<PersonalUseProps>({
@@ -67,6 +74,7 @@ export default function PersonalUse() {
     who: "Xuxu",
     type: "",
     amount: 0,
+    date: "",
   });
 
   const [page, setPage] = useState(0);
@@ -204,6 +212,20 @@ export default function PersonalUse() {
     toast.info("Em breve, estará disponível!");
   };
 
+  const handleDateChange = (who: "toto" | "xuxu") => (value: Dayjs | null) => {
+    if (who === "toto") {
+      setTotoUse({
+        ...totoUse,
+        date: value?.format("DD/MM/YYYY") || "",
+      });
+    } else if (who === "xuxu") {
+      setXuxuUse({
+        ...xuxuUse,
+        date: value?.format("DD/MM/YYYY") || "",
+      });
+    }
+  };
+
   return (
     <Grid container spacing={12} rowSpacing={5} justifyContent="center">
       <Grid
@@ -221,6 +243,7 @@ export default function PersonalUse() {
           handleChangeToto={handleChangeToto}
           totoUse={totoUse}
           handleSubmitToto={handleSubmitToto}
+          handleDateChange={handleDateChange}
         />
       </Grid>
       <Grid
@@ -233,30 +256,13 @@ export default function PersonalUse() {
           gap: "1rem",
         }}
       >
-        <StatisticsCard title="Xuxu" personalUses={xuxuUseQtd} />
-        <TextField
-          label="Quantidade de barris"
-          type="number"
-          onChange={handleChangeXuxu("amount")}
+        <NewXuxuUse
+          xuxuUseQtd={xuxuUseQtd}
+          handleChangeXuxu={handleChangeXuxu}
+          xuxuUse={xuxuUse}
+          handleSubmitXuxu={handleSubmitXuxu}
+          handleDateChange={handleDateChange}
         />
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Tipo do barril</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={xuxuUse.type.split("L")[0]}
-            label="Tipo do barril"
-            onChange={handleChangeXuxu("type")}
-          >
-            <MenuItem value={10}>10 litros</MenuItem>
-            <MenuItem value={30}>30 litros</MenuItem>
-            <MenuItem value={50}>50 litros</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Button variant="outlined" onClick={handleSubmitXuxu}>
-          Salvar
-        </Button>
       </Grid>
       <Grid xs={12}>
         <Typography variant="h4" alignSelf="start" m="0 0rem 0.5rem 1rem">
