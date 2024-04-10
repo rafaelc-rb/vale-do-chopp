@@ -79,12 +79,11 @@ export async function DELETE(request: NextRequest) {
         const use = await prisma.personalUse.findUnique({
             where: { id: id }
         })
+
         
         if (use) {
             await prisma.personalUse.delete({
-                where: {
-                    id: id,
-                },
+                where: { id: id },
             })
 
             const expense = await prisma.expense.findUnique({
