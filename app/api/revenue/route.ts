@@ -27,14 +27,6 @@ export async function POST(request: NextRequest) {
                     amount: stock.amount - revenue.amount
                 }
             })
-            await prisma.revenue.create({
-                data: {
-                    type: revenue.type,
-                    amount: revenue.amount,
-                    price: revenue.price,
-                    date: revenue.date,
-                }
-            })
             // Verifique se a quantidade de estoque é zero
             if(stock.amount - 1 === 0) {
                 await prisma.stock.delete({
@@ -43,6 +35,14 @@ export async function POST(request: NextRequest) {
                     }
                 })
             }
+            await prisma.revenue.create({
+                data: {
+                    type: revenue.type,
+                    amount: revenue.amount,
+                    price: revenue.price,
+                    date: revenue.date,
+                }
+            })
         } else {
             return new Response("No stock",{status : 404})
         }
@@ -75,6 +75,15 @@ export async function DELETE(request: NextRequest) {
                     id: id,
                 },
             })
+            
+            const newExpense = await prisma.expense.create({
+                data: {
+                    item_name: `Barril de ${rev.type}`,
+                    amount: rev.amount,
+                    price: rev.price,
+                    purchase_date: rev.date,
+                }
+            })
     
             await prisma.stock.create({
                 data: {
@@ -82,6 +91,7 @@ export async function DELETE(request: NextRequest) {
                     amount: rev.amount,
                     price: rev.price,
                     purchase_date: rev.date,
+                    expenseId: newExpense.id
                 }
             })
         }
