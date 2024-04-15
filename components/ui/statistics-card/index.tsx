@@ -3,6 +3,7 @@ import React from "react";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import { PersonalUseProps } from "@/app/personal-use/page";
+import { AccountBalanceOutlined } from "@mui/icons-material";
 
 interface Stock {
   type: string;
@@ -17,6 +18,16 @@ interface StatisticsCardProps {
 
 function StatisticsCard(props: StatisticsCardProps) {
   const { title, stock, amount, personalUses }: StatisticsCardProps = props;
+
+  const handleAmount = () => {
+    if (Number(amount) < 0) {
+      return `- R\$${amount?.replace(/-/g, "")}`;
+    } else if (!amount) {
+      return "R$0.00";
+    } else {
+      return `R\$${amount}`;
+    }
+  };
   return (
     <Paper
       sx={{
@@ -42,13 +53,19 @@ function StatisticsCard(props: StatisticsCardProps) {
           {title === "Receitas" && <AttachMoneyOutlinedIcon color="success" />}
           {title === "Despesas" && <AttachMoneyOutlinedIcon color="error" />}
           {title === "Estoque" && <Inventory2OutlinedIcon />}
+          {title === "Caixa" && <AccountBalanceOutlined />}
+
           <Typography fontWeight={700} variant="h6">
             {title}
           </Typography>
         </Box>
         {title !== "Estoque" && title !== "Toto" && title !== "Xuxu" && (
-          <Typography color={title === "Despesas" ? "error" : "inherit"}>
-            R${amount ? amount : "0.00"}
+          <Typography
+            color={
+              title === "Despesas" || Number(amount) < 0 ? "error" : "inherit"
+            }
+          >
+            {handleAmount()}
           </Typography>
         )}
         {(title === "Toto" || title === "Xuxu") && (

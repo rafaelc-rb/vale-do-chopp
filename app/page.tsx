@@ -54,6 +54,13 @@ export default function Home() {
       >
         <StatisticsCard title="Receitas" amount={handleSumPrices(revenues)} />
         <StatisticsCard title="Despesas" amount={handleSumPrices(expenses)} />
+        <StatisticsCard
+          title="Caixa"
+          amount={(
+            Number(handleSumPrices(revenues)) -
+            Number(handleSumPrices(expenses))
+          ).toFixed(2)}
+        />
       </Grid>
       <Grid xs={5}>
         <StatisticsCard title="Estoque" stock={stock} />
