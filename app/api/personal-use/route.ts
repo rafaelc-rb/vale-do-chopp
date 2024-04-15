@@ -82,24 +82,30 @@ export async function DELETE(request: NextRequest) {
 
         
         if (use) {
-            await prisma.personalUse.delete({
-                where: { id: id },
-            })
-
             const expense = await prisma.expense.findUnique({
                 where: {
                     id: use.expenseId,
                 }
             })
+
+            let price
+
+            if (expense) {
+                price =  (Number(expense.price) / expense.amount) * use.amount
+            }
     
             await prisma.stock.create({
                 data: {
                     type: use.type,
                     amount: use.amount,
-                    price: expense?.price || '0.00',
+                    price: String(price) || '0.00',
                     purchase_date: use.date,
                     expenseId: use.expenseId
                 }
+            })
+
+            await prisma.personalUse.delete({
+                where: { id: id },
             })
         }
 
