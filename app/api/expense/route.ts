@@ -38,7 +38,7 @@ export async function DELETE(request: NextRequest) {
     const { id } = await request.json()
     try {
 
-        const stockItem = await prisma.stock.findUnique({
+        const stockItem = await prisma.stock.findFirst({
             where: {
                 expenseId: id,
             }
@@ -58,7 +58,7 @@ export async function DELETE(request: NextRequest) {
             },
         })
         return new Response("Deleted successfully", {status: 200})
-    } catch (err){
-        return new Response("Error",{status: 400})
+    } catch (err: any){
+        return new Response(err.message,{status: 400})
     }
 }
