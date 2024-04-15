@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
                     id: stock.id
                 },
                 data: {
-                    amount: stock.amount - personalUse.amount
+                    amount: stock.amount - personalUse.amount,
+                    price: String((Number(stock.price) / stock.amount) * (stock.amount - personalUse.amount))
                 }
             })
             // Verifique se a quantidade de estoque é zero
